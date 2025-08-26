@@ -1,0 +1,501 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+/* Reset básico y fuente Roboto */
+* {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+img {
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Contenedor general */
+.contenedor {
+  background-color: rgb(245, 245, 245);
+  padding-bottom: 40px;
+}
+
+/* Header - Menu */
+.header {
+  padding-top: 10px;
+  width: 90%;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.logo span {
+  color: orange;
+}
+
+.hamburguesa {
+  width: 30px;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .hamburguesa {
+    display: none;
+  }
+}
+
+/* Navegación */
+.menu {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .menu {
+    display: flex;
+  }
+}
+
+.navegacion {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  list-style: none;
+  gap: 30px;
+}
+
+@media (min-width: 992px) {
+  .navegacion {
+    gap: 50px;
+  }
+}
+
+.navegacion a {
+  text-decoration: none;
+  color: rgb(97, 97, 97);
+  font-weight: 400;
+  font-size: 15px;
+}
+
+.navegacion a:hover {
+  color: black;
+}
+
+.navegacion li:last-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navegacion li:last-child a {
+  font-weight: 700;
+}
+
+/* Aquí quité la regla que daba fondo naranja al último enlace */
+
+/* Información Banner */
+.presentacion {
+  width: 90%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .presentacion {
+    flex-direction: row;
+  }
+}
+
+/* Información */
+.informacion {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .informacion {
+    text-align: start;
+    align-items: flex-start;
+  }
+}
+
+.informacion--boton button {
+  padding: 10px;
+  background-color: orange;
+  border: 1px solid orange;
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.informacion--boton button:hover {
+  background-color: white;
+  color: orange;
+}
+
+/* Información imagen */
+.presentacion--imagen {
+  max-width: 300px;
+  filter: drop-shadow(0 1mm 3mm rgba(255,166,0,0.468));
+}
+
+@media (min-width: 456px) {
+  .presentacion--imagen {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .presentacion--imagen {
+    max-width: 800px;
+  }
+}
+
+/* Sección platos */
+.comida {
+  width: 90%;
+  margin-inline: auto;
+}
+
+.platos {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 85px;
+}
+
+@media (min-width: 768px) {
+  .platos {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 992px) {
+  .platos {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+.comida--titulo {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 85px;
+}
+
+@media (min-width: 768px) {
+  .comida--titulo {
+    text-align: start;
+  }
+}
+
+/* Contenedor de tarjetas (platos) */
+.plato {
+  width: 80%;
+  margin-inline: auto;
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 196, 196, 0.426);
+}
+
+.plato img {
+  width: 150px;
+  filter: drop-shadow(0 0 0.9rem orange);
+  margin-top: -85px;
+}
+
+.plato p {
+  font-size: 15px;
+  color: rgb(63, 63, 63);
+}
+
+.plato--info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.plato--info p {
+  font-weight: 900;
+}
+
+.plato--info button {
+  background-color: orange;
+  color: white;
+  font-weight: 900;
+  padding: 5px 12px;
+  border-radius: 50%;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+/* Carrito */
+.carrito {
+  position: relative;
+  display: inline-block;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.carrito-icono {
+  width: 30px;
+}
+
+#contador-carrito {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: orange;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 50%;
+}
+
+/* Modal carrito */
+.modal {
+  display: none; /* oculto por defecto */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.activo {
+  display: flex; /* visible cuando activo */
+}
+
+.modal-contenido {
+  background: rgba(255, 255, 255, 0.9); /* blanco semi-transparente */
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-contenido h2 {
+  margin-bottom: 15px;
+  font-weight: 900;
+  font-size: 22px;
+  text-align: center;
+}
+
+.modal-contenido ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.modal-contenido li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  font-weight: 700;
+}
+
+.modal-contenido li span {
+  font-weight: 400;
+  color: gray;
+}
+
+/* Total en modal */
+.modal-contenido .total {
+  font-size: 18px;
+  font-weight: 900;
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Botón cerrar modal */
+.modal-contenido button.cerrar {
+  background: orange;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  font-weight: 900;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.modal-contenido button.cerrar:hover {
+  background: #cc7a00;
+}
+
+/* ----------- Código nuevo del segundo CSS ------------ */
+
+/* Contenedor principal (para formularios y imagen) */
+.contenedor-principal {
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(0,0,0,0.1);
+  background-color: white; /* Para que destaque sobre fondo */
+  margin: 30px auto; /* centrado con margen */
+}
+
+/* Header dentro de contenedor */
+.contenedor .header {
+  width: 100%;
+  padding: 20px 30px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid orange;
+  margin-bottom: 30px;
+}
+
+/* Formularios y botones */
+.contenedor-formularios {
+  flex: 1;
+  padding: 40px;
+  background-color: #fff;
+  position: relative;
+}
+
+.botones-toggle {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.botones-toggle button {
+  margin: 0 10px;
+  padding: 12px 25px;
+  background-color: orange;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.botones-toggle button:hover,
+.botones-toggle button.active {
+  /* Podés agregar estilos aquí si querés */
+}
+
+.formularios {
+  position: relative;
+  height: 300px;
+}
+
+.formulario {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.5s ease;
+}
+
+.formulario.activo {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.formulario h2 {
+  margin-bottom: 15px;
+  color: orange;
+  font-weight: 900;
+}
+
+.formulario input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1.5px solid orange;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.formulario input:focus {
+  outline: none;
+  border-color: orange;
+  box-shadow: 0 0 5px orange;
+}
+
+.formulario button {
+  background-color: orange;
+  color: white;
+  padding: 14px;
+  border: none;
+  width: 100%;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+}
+
+.formulario button:hover {
+  background-color: orange;
+}
+
+/* Contenedor imagen */
+.contenedor-imagen {
+  flex: 1;
+}
+
+.contenedor-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contenedor-principal {
+    flex-direction: column;
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+    margin: 0 auto;
+  }
+  .contenedor-imagen {
+    height: 200px;
+    background-size: contain;
+    background-position: center;
+  }
+}

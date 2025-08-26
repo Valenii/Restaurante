@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+img {
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Contenedor general */
+.contenedor {
+    background-color: rgb(245, 245, 245);
+    padding-bottom: 40px;
+}
+
+/* Header - Menu */
+.header {
+    padding-top: 10px;
+    width: 90%;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+    font-weight: 900;
+    font-size: 20px;
+}
+
+.logo span {
+    color: orange;
+}
+
+/* Icono hamburguesa (menú móvil) */
+.hamburguesa {
+    width: 30px;
+}
+
+@media (min-width: 768px) {
+    .hamburguesa {
+        display: none;
+    }
+}
+
+.hamburguesa:hover {
+    cursor: pointer;
+}
+
+/* Navegación */
+.menu {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .menu {
+        display: flex;
+    }
+}
+
+.navegacion {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    list-style: none;
+    gap: 30px;
+}
+
+.navegacion a {
+    text-decoration: none;
+    color: rgb(97, 97, 97);
+    font-weight: 400;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.navegacion a:hover,
+.navegacion a.active {
+    color: black;
+}
+
+.navegacion li:last-child {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navegacion li:last-child a {
+    font-weight: 700;
+}
+
+.navegacion li:last-child a:last-child {
+    background-color: orange;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+    border: 1px solid orange;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navegacion li:last-child a:last-child:hover {
+    background-color: white;
+    color: orange;
+}
+
+/* Título principal de servicios */
+.servicios--titulo {
+    width: 90%;
+    margin: 40px auto 60px auto;
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: rgb(63, 63, 63);
+    text-align: center;
+}
+
+/* Contenedor de servicios */
+.container {
+    width: 90%;
+    margin: 0 auto 40px auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 50px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 60px;
+    }
+}
+
+/* Cada servicio */
+.service {
+    background-color: white;
+    padding: 25px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: default;
+}
+
+.service:hover {
+    box-shadow: 0 8px 24px rgba(255, 165, 0, 0.3);
+    transform: translateY(-10px);
+}
+
+.service h2 {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: rgb(63, 63, 63);
+    margin-bottom: 12px;
+}
+
+.service p {
+    font-size: 1rem;
+    color: rgb(80, 80, 80);
+    line-height: 1.5;
+}

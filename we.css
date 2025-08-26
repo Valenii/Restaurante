@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+img {
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Contenedor */
+.contenedor {
+    background-color: rgb(245, 245, 245);
+    padding-bottom: 40px;
+}
+
+/* Header */
+.header {
+    padding-top: 10px;
+    width: 90%;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+    font-weight: 900;
+    font-size: 20px;
+}
+
+.logo span {
+    color: orange;
+}
+
+/* Hamburguesa menú móvil */
+.hamburguesa {
+    width: 30px;
+}
+
+@media (min-width:768px) {
+    .hamburguesa {
+        display: none;
+    }
+}
+
+.hamburguesa:hover {
+    cursor: pointer;
+}
+
+/* Navegación */
+.menu {
+    display: none;
+}
+
+@media (min-width:768px) {
+    .menu {
+        display: flex;
+    }
+}
+
+.navegacion {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    list-style: none;
+    gap: 30px;
+}
+
+.navegacion a {
+    text-decoration: none;
+    color: rgb(97, 97, 97);
+    font-weight: 400;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.navegacion a:hover,
+.navegacion a.active {
+    color: black;
+}
+
+.navegacion li:last-child {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navegacion li:last-child a {
+    font-weight: 700;
+}
+
+.navegacion li:last-child a:last-child {
+    background-color: orange;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+    border: 1px solid orange;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navegacion li:last-child a:last-child:hover {
+    background-color: white;
+    color: orange;
+}
+
+/* Presentación */
+.presentacion {
+    width: 90%;
+    margin-inline: auto;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.presentacion h1 {
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: rgb(63, 63, 63);
+}
+
+/* Sección equipo */
+.platos.equipo {
+    width: 90%;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 60px;
+    justify-items: center;
+}
+
+@media (min-width: 768px) {
+    .platos.equipo {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Miembro */
+.miembro {
+    width: 80%;
+    max-width: 300px;
+    background-color: white;
+    padding: 25px 20px 30px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(196, 196, 196, 0.426);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    cursor: default;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.miembro:hover {
+    box-shadow: 0 0 20px orange;
+    transform: translateY(-10px);
+}
+
+.miembro img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 0.9rem orange);
+    margin-top: -75px;
+    transition: transform 0.3s ease;
+}
+
+.miembro:hover img {
+    transform: scale(1.2);
+}
+
+.miembro h2 {
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: rgb(63, 63, 63);
+}
+
+.miembro p {
+    font-size: 15px;
+    color: rgb(63, 63, 63);
+    line-height: 1.4;
+}
