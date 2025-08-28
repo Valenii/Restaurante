@@ -1,5 +1,26 @@
 <?php
 session_start();
+
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// IDs de hamburguesas que queremos mostrar
+$idsHamburguesas = [8,1,10,11,12,4];
+$idsStr = implode(",", $idsHamburguesas);
+
+// Traer solo las hamburguesas necesarias
+$productos = [];
+$resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos WHERE ID IN ($idsStr)");
+if ($resultado) {
+    while ($row = $resultado->fetch_assoc()) {
+        $productos[$row['ID']] = $row; // guardamos por ID
+    }
+} else {
+    die("Error en la consulta: " . $conexion->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -9,7 +30,7 @@ session_start();
   <title>Hamburguesas - MendoFood</title>
   <link rel="stylesheet" href="../normalize.css" />
   <link rel="stylesheet" href="../index.css" />
-<style>
+  <style>
     /* Modal del carrito */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
     .modal-contenido { background: white; padding: 20px; border-radius: 10px; width: 320px; max-height: 80vh; overflow-y: auto; }
@@ -25,137 +46,142 @@ session_start();
   </style>
 </head>
 <body>
+<div class="contenedor">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo"><p>MENDO<span>FOOD</span></p></div>
+    <div class="hamburguesa"><img src="../Imagenes/menu.png" alt="Menu hamburguesa"></div>
+    <nav class="menu">
+      <ul class="navegacion">
+        <li><a href="../index.php">Inicio</a></li>
+        <li><a href="../Menu.php">Menú</a></li>
+        <li><a href="../servicios.php">Servicios</a></li>
+        <li><a href="../We.php">Nosotros</a></li>
+        <li><a href="#">Galería</a></li>
+        <li>
+          <?php if(isset($_SESSION['usuario'])): ?>
+            <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
+            <a href="../logout.php">Cerrar sesión</a>
+          <?php else: ?>
+            <a href="../login-register.php">Iniciar Sesión</a>
+            <a href="../login-register.php">Registrarse</a>
+          <?php endif; ?>
+        </li>
+      </ul>
 
-  <div class="contenedor">
-    <!-- HEADER -->
-    <header class="header">
-      <div class="logo"><p>MENDO<span>FOOD</span></p></div>
-      <div class="hamburguesa"><img src="../Imagenes/menu.png" alt="Menu hamburguesa"></div>
-      <nav class="menu">
-        <ul class="navegacion">
-          <li><a href="../index.php">Inicio</a></li>
-          <li><a href="../Menu.php">Menú</a></li>
-          <li><a href="../servicios.php">Servicios</a></li>
-          <li><a href="../We.php">Nosotros</a></li>
-          <li><a href="#">Galería</a></li>
-          <li>
-              <?php if(isset($_SESSION['usuario'])): ?>
-              <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
-              <a href="../logout.php">Cerrar sesión</a>
-            <?php else: ?>
-              <a href="../login-register.php">Iniciar Sesión</a>
-              <a href="../login-register.php">Registrarse</a>
-            <?php endif; ?>
-          </li>
-        </ul>
+      <!-- Carrito -->
+      <div class="carrito" id="abrir-carrito">
+        <img src="../Imagenes/icons8-carrito-de-compras-30.png" alt="Carrito" class="carrito-icono" />
+        <span id="contador-carrito">0</span>
+      </div>
+    </nav>
+  </header>
 
-        <!-- Carrito -->
-        <div class="carrito" id="abrir-carrito">
-          <img src="../Imagenes/icons8-carrito-de-compras-30.png" alt="Carrito" class="carrito-icono" />
-          <span id="contador-carrito">0</span>
-        </div>
-      </nav>
-    </header>
+<!-- Hamburguesas -->
+<main class="comida">
+  <h2 class="comida--titulo">Hamburguesas</h2>
+  <div class="platos">
 
-   <!-- Hamburguesas -->
-  <main class="comida">
-    <h2 class="comida--titulo">Hamburguesas</h2>
-    <div class="platos">
+    <!-- Hamburguesa 1: Clásica -->
+    <article class="plato">
+      <img src="../Imagenes/Hamburguesas.png" alt="Clásica" />
+      <h1>Clásica</h1>
+      <p>Pan, doble carne, cheddar, lechuga, tomate, pepinos y salsa especial.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[8]['Precio']; ?>">$<?php echo $productos[8]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="8"><?php echo $productos[8]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Clásica"
+                data-precio="<?php echo $productos[8]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="8">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/Hamburguesas.png" alt="Clásica" />
-        <h1>Clásica</h1>
-        <p>Pan, doble carne, cheddar, lechuga, tomate, pepinos y salsa especial.</p>
-        <div class="plato--info">
-          <p data-precio="9.99">$9.99</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Clásica"
-                  data-precio="9.99"
-                  data-categoria="hamburguesas"
-                  data-id="1">+</button>
-        </div>
-      </article>
+    <!-- Hamburguesa 2: Hamburguesa de Carne -->
+    <article class="plato">
+      <img src="../Imagenes/hamburguesa.png" alt="Hamburguesa de Carne" />
+      <h1>Hamburguesa de Carne</h1>
+      <p>Deliciosa hamburguesa de carne vacuna con bacon crocante, lechuga fresca, tomate, queso cheddar fundido, cebolla morada y salsa especial.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[1]['Precio']; ?>">$<?php echo $productos[1]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="1"><?php echo $productos[1]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Hamburguesa de Carne"
+                data-precio="<?php echo $productos[1]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="1">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/hamburguesa.png" alt="Hamburguesa de Carne" />
-        <h1>Hamburguesa de Carne</h1>
-        <p>Deliciosa hamburguesa de carne vacuna con bacon crocante, lechuga fresca, tomate, queso cheddar fundido, cebolla morada y salsa especial.</p>
-        <div class="plato--info">
-          <p data-precio="12.99">$12.99</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Hamburguesa de Carne"
-                  data-precio="12.99"
-                  data-categoria="hamburguesas"
-                  data-id="2">+</button>
-        </div>
-      </article>
+    <!-- Hamburguesa 3: Hamburguesa de Pollo Crocante -->
+    <article class="plato">
+      <img src="../Imagenes/Hamburguesa con pollo frito.png" alt="Hamburguesa de Pollo Crocante" />
+      <h1>Hamburguesa de Pollo Crocante</h1>
+      <p>Pollo frito crocante, tomate fresco, queso cheddar fundido, pepinillos y salsa picante.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[10]['Precio']; ?>">$<?php echo $productos[10]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="10"><?php echo $productos[10]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Hamburguesa de Pollo Crocante"
+                data-precio="<?php echo $productos[10]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="10">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/Hamburguesa con pollo frito.png" alt="Hamburguesa de Pollo Crocante" />
-        <h1>Hamburguesa de Pollo Crocante</h1>
-        <p>Pollo frito crocante, tomate fresco, queso cheddar fundido, pepinillos y salsa picante.</p>
-        <div class="plato--info">
-          <p data-precio="11.49">$11.49</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Hamburguesa de Pollo Crocante"
-                  data-precio="11.49"
-                  data-categoria="hamburguesas"
-                  data-id="3">+</button>
-        </div>
-      </article>
+    <!-- Hamburguesa 4: Hamburguesa con Aros de Cebolla -->
+    <article class="plato">
+      <img src="../Imagenes/Hamburguesa con aros de cebolla.png" alt="Hamburguesa con Aros de Cebolla" />
+      <h1>Hamburguesa con Aros de Cebolla</h1>
+      <p>Carne vacuna, queso cheddar, tocino crocante y aros de cebolla en pan artesanal tostado.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[11]['Precio']; ?>">$<?php echo $productos[11]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="11"><?php echo $productos[11]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Hamburguesa con Aros de Cebolla"
+                data-precio="<?php echo $productos[11]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="11">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/Hamburguesa con aros de cebolla.png" alt="Hamburguesa con Aros de Cebolla" />
-        <h1>Hamburguesa con Aros de Cebolla</h1>
-        <p>Carne vacuna, queso cheddar, tocino crocante y aros de cebolla en pan artesanal tostado.</p>
-        <div class="plato--info">
-          <p data-precio="13.49">$13.49</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Hamburguesa con Aros de Cebolla"
-                  data-precio="13.49"
-                  data-categoria="hamburguesas"
-                  data-id="4">+</button>
-        </div>
-      </article>
+    <!-- Hamburguesa 5: Hamburguesa de Pollo -->
+    <article class="plato">
+      <img src="../Imagenes/Hamburguesa peqeu.png" alt="Hamburguesa de Pollo" />
+      <h1>Hamburguesa de Pollo</h1>
+      <p>Pollo frito crocante, queso cheddar fundido y lechuga en pan artesanal recién tostado.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[12]['Precio']; ?>">$<?php echo $productos[12]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="12"><?php echo $productos[12]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Hamburguesa de Pollo"
+                data-precio="<?php echo $productos[12]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="12">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/Hamburguesa peqeu.png" alt="Hamburguesa de Pollo" />
-        <h1>Hamburguesa de Pollo</h1>
-        <p>Pollo frito crocante, queso cheddar fundido y lechuga en pan artesanal recién tostado.</p>
-        <div class="plato--info">
-          <p data-precio="10.49">$10.49</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Hamburguesa de Pollo"
-                  data-precio="10.49"
-                  data-categoria="hamburguesas"
-                  data-id="5">+</button>
-        </div>
-      </article>
+    <!-- Hamburguesa 6: Hamburguesa XL -->
+    <article class="plato">
+      <img src="../Imagenes/hamburguesa-grande.png" alt="Hamburguesa XL" />
+      <h1>Hamburguesa XL</h1>
+      <p>Doble carne vacuna, bacon crocante, doble queso cheddar, lechuga, tomate, cebolla caramelizada y salsa especial en pan artesanal.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[4]['Precio']; ?>">$<?php echo $productos[4]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="4"><?php echo $productos[4]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Hamburguesa XL"
+                data-precio="<?php echo $productos[4]['Precio']; ?>"
+                data-categoria="hamburguesas"
+                data-id="4">+</button>
+      </div>
+    </article>
 
-      <article class="plato">
-        <img src="../Imagenes/hamburguesa-grande.png" alt="Hamburguesa XL" />
-        <h1>Hamburguesa XL</h1>
-        <p>Doble carne vacuna, bacon crocante, doble queso cheddar, lechuga, tomate, cebolla caramelizada y salsa especial en pan artesanal.</p>
-        <div class="plato--info">
-          <p data-precio="14.99">$14.99</p>
-          <button type="button" class="btn-agregar"
-                  data-nombre="Hamburguesa XL"
-                  data-precio="14.99"
-                  data-categoria="hamburguesas"
-                  data-id="6">+</button>
-        </div>
-      </article>
+  </div>
+</main>
 
-    </div>
-  </main>
-</div>
-
-      <!-- Agregar el resto de hamburguesas de manera similar, con data-nombre, data-precio, data-categoria y data-id -->
-
-    </div>
-  </main>
-</div>
-
+ </div>
 <!-- Modal Carrito -->
 <div class="modal" id="modal-carrito">
   <div class="modal-contenido">
@@ -178,10 +204,8 @@ const botonesAgregar = document.querySelectorAll(".btn-agregar");
 const btnComprar = document.getElementById("btn-comprar");
 const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
 
-// Cargar carrito desde localStorage
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-// Funciones
 function actualizarContador() {
   const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
   contadorCarrito.textContent = totalCantidad;
@@ -223,7 +247,6 @@ function agregarAlCarrito(nombre, precio, categoria, producto_id) {
   actualizarContador();
 }
 
-// Eventos
 botonesAgregar.forEach(boton => {
   boton.addEventListener("click", () => {
     const nombre = boton.getAttribute("data-nombre");

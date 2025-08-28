@@ -1,4 +1,21 @@
-<?php session_start(); ?>
+<?php
+session_start();
+
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// Traer todos los productos
+$resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos");
+$productos = [];
+if ($resultado) {
+    while ($row = $resultado->fetch_assoc()) {
+        $productos[$row['ID']] = $row; // guardamos por ID
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

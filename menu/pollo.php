@@ -1,5 +1,26 @@
 <?php
 session_start();
+
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// IDs de los pollos fritos que queremos mostrar
+$idsHamburguesas = [17,18,19,20];
+$idsStr = implode(",", $idsHamburguesas);
+
+// Traer solo pollo frito necesarias
+$productos = [];
+$resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos WHERE ID IN ($idsStr)");
+if ($resultado) {
+    while ($row = $resultado->fetch_assoc()) {
+        $productos[$row['ID']] = $row; // guardamos por ID
+    }
+} else {
+    die("Error en la consulta: " . $conexion->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -57,58 +78,79 @@ session_start();
       </nav>
     </header>
 
-     <!-- Sección de Pollo Frito -->
-  <main class="comida">
-    <h2 class="comida--titulo">Pollo Frito</h2>
-    <div class="platos">
+    <!-- Sección de Pollo Frito -->
+<main class="comida">
+  <h2 class="comida--titulo">Pollo Frito</h2>
+  <div class="platos">
 
-      <!-- Pollo Frito 1 -->
-      <article class="plato">
-        <img src="../Imagenes/Pollo_fritos.png" alt="Pollo Frito Clásico" />
-        <h1>Pollo Frito Clásico</h1>
-        <p>Trozos de pollo frito clásico, dorados a la perfección y con un rebozado crujiente que encierra un interior jugoso y sabroso. ¡Un favorito que nunca falla!</p>
-        <div class="plato--info">
-          <p>$7.99</p>
-          <button type="button" class="btn-agregar" data-id="1" data-nombre="Pollo Frito Clásico" data-precio="7.99" data-categoria="Pollo Frito">+</button>
-        </div>
-      </article>
+     <!-- Pollo Frito 1 -->
+    <article class="plato">
+      <img src="../Imagenes/Pollo_fritos.png" alt="Pollo Frito Clásico" />
+      <h1>Pollo Frito Clásico</h1>
+      <p>Trozos de pollo frito clásico, dorados a la perfección y con un rebozado crujiente que encierra un interior jugoso y sabroso. ¡Un favorito que nunca falla!</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[17]['Precio']; ?>">$<?php echo $productos[17]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="17"><?php echo $productos[17]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Pollo Frito Clásico"
+                data-precio="<?php echo $productos[17]['Precio']; ?>"
+                data-categoria="pollo-frito"
+                data-id="17">+</button>
+      </div>
+    </article>
 
-      <!-- Pollo Frito 2 -->
-      <article class="plato">
-        <img src="../Imagenes/pequeña cubeta de pollo frito.png" alt="Pollo Frito Pequeño" />
-        <h1>Cubeta Pequeña</h1>
-        <p>Porción pequeña de pollo frito dorado y crujiente, ideal para disfrutar un snack irresistible y lleno de sabor en cualquier momento.</p>
-        <div class="plato--info">
-          <p>$9.49</p>
-          <button type="button" class="btn-agregar" data-id="2" data-nombre="Cubeta Pequeña" data-precio="9.49" data-categoria="Pollo Frito">+</button>
-        </div>
-      </article>
+    <!-- Pollo Frito 2 -->
+    <article class="plato">
+      <img src="../Imagenes/pequeña cubeta de pollo frito.png" alt="Pollo Frito Pequeño" />
+      <h1>Cubeta Pequeña</h1>
+      <p>Porción pequeña de pollo frito dorado y crujiente, ideal para disfrutar un snack irresistible y lleno de sabor en cualquier momento.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[18]['Precio']; ?>">$<?php echo $productos[18]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="18"><?php echo $productos[18]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Cubeta Pequeña"
+                data-precio="<?php echo $productos[18]['Precio']; ?>"
+                data-categoria="pollo-frito"
+                data-id="18">+</button>
+      </div>
+    </article>
 
-      <!-- Pollo Frito 3 -->
-      <article class="plato">
-        <img src="../Imagenes/cubeta de pollo frito.png" alt="Pollo Frito Mediano" />
-        <h1>Cubeta Mediana</h1>
-        <p>Generosa cubeta con trozos de pollo frito crujiente por fuera y jugoso por dentro, perfecta para compartir y satisfacer tu antojo.</p>
-        <div class="plato--info">
-          <p>$12.99</p>
-          <button type="button" class="btn-agregar" data-id="3" data-nombre="Cubeta Mediana" data-precio="12.99" data-categoria="Pollo Frito">+</button>
-        </div>
-      </article>
+    <!-- Pollo Frito 3 -->
+    <article class="plato">
+      <img src="../Imagenes/cubeta de pollo frito.png" alt="Pollo Frito Mediano" />
+      <h1>Cubeta Mediana</h1>
+      <p>Generosa cubeta con trozos de pollo frito crujiente por fuera y jugoso por dentro, perfecta para compartir y satisfacer tu antojo.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[19]['Precio']; ?>">$<?php echo $productos[19]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="19"><?php echo $productos[19]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Cubeta Mediana"
+                data-precio="<?php echo $productos[19]['Precio']; ?>"
+                data-categoria="pollo-frito"
+                data-id="19">+</button>
+      </div>
+    </article>
 
-      <!-- Pollo Frito 4 -->
-      <article class="plato">
-        <img src="../Imagenes/pollo-frito.png" alt="Pollo Grande Frito" />
-        <h1>Pollo Grande Frito</h1>
-        <p>Jugosa pechuga de pollo empanada y frita al punto justo, acompañada de bacon crocante, lechuga fresca, tomate, queso cheddar derretido y nuestra salsa especial, servida en un pan artesanal tostado. ¡Una explosión de sabor crujiente!</p>
-        <div class="plato--info">
-          <p>$13.49</p>
-          <button type="button" class="btn-agregar" data-id="4" data-nombre="Pollo Grande Frito" data-precio="13.49" data-categoria="Pollo Frito">+</button>
-        </div>
-      </article>
+    <!-- Pollo Frito 4 -->
+    <article class="plato">
+      <img src="../Imagenes/pollo-frito.png" alt="Pollo Grande Frito" />
+      <h1>Pollo Grande Frito</h1>
+      <p>Jugosa pechuga de pollo empanada y frita al punto justo, acompañada de bacon crocante, lechuga fresca, tomate, queso cheddar derretido y nuestra salsa especial, servida en un pan artesanal tostado. ¡Una explosión de sabor crujiente!</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[20]['Precio']; ?>">$<?php echo $productos[20]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="20"><?php echo $productos[20]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Pollo Grande Frito"
+                data-precio="<?php echo $productos[20]['Precio']; ?>"
+                data-categoria="pollo-frito"
+                data-id="20">+</button>
+      </div>
+    </article>
+
 
     </div>
   </main>
-</div>
+
  <!-- Modal Carrito -->
     <div class="modal" id="modal-carrito">
       <div class="modal-contenido">

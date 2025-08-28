@@ -1,5 +1,26 @@
 <?php
 session_start();
+
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// IDs de las bebidas que queremos mostrar
+$idsHamburguesas = [5,6,7];
+$idsStr = implode(",", $idsHamburguesas);
+
+// Traer solo las bebidas necesarias
+$productos = [];
+$resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos WHERE ID IN ($idsStr)");
+if ($resultado) {
+    while ($row = $resultado->fetch_assoc()) {
+        $productos[$row['ID']] = $row; // guardamos por ID
+    }
+} else {
+    die("Error en la consulta: " . $conexion->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -55,47 +76,61 @@ session_start();
 </nav>
    </header>
 
-    <!-- Sección de Bebidas -->
-    <main class="comida">
-      <h2 class="comida--titulo">Bebidas</h2>
-      <div class="platos">
+   <!-- Sección de Bebidas -->
+<main class="comida">
+  <h2 class="comida--titulo">Bebidas</h2>
+  <div class="platos">
 
-        <!-- Bebida 1 -->
-        <article class="plato">
-          <img src="../Imagenes/Bebida.png" alt="Bebida Clásica" />
-          <h1>Bebida Clásica</h1>
-          <p>Refrescante y equilibrada, la bebida clásica que acompaña perfectamente cada bocado, ideal para saciar tu sed y realzar el sabor de tu comida.</p>
-          <div class="plato--info">
-            <p>$2.99</p>
-            <button type="button" class="btn-agregar" data-id="1" data-nombre="Bebida Clásica" data-precio="2.99" data-categoria="Bebidas">+</button>
-          </div>
-        </article>
-
-        <!-- Bebida 2 -->
-        <article class="plato">
-          <img src="../Imagenes/Aguas.png" alt="Agua sin gas" />
-          <h1>Agua Sin Gas</h1>
-          <p>Pureza en cada sorbo, agua sin gas cristalina que hidrata y refresca de forma natural, perfecta para disfrutar con cualquier plato.</p>
-          <div class="plato--info">
-            <p>$1.99</p>
-            <button type="button" class="btn-agregar" data-id="2" data-nombre="Agua Sin Gas" data-precio="1.99" data-categoria="Bebidas">+</button>
-          </div>
-        </article>
-
-        <!-- Bebida 3 -->
-        <article class="plato">
-          <img src="../Imagenes/Lata de Fanta.png" alt="Fanta" />
-          <h1>Lata de Fanta</h1>
-          <p>Explosión cítrica y burbujeante que despierta tus sentidos, la Fanta es la opción ideal para quienes buscan sabor y frescura en cada lata.</p>
-          <div class="plato--info">
-            <p>$3.49</p>
-            <button type="button" class="btn-agregar" data-id="3" data-nombre="Lata de Fanta" data-precio="3.49" data-categoria="Bebidas">+</button>
-          </div>
-        </article>
-
+    <!-- Bebida 1: Bebida Clásica -->
+    <article class="plato">
+      <img src="../Imagenes/Bebida.png" alt="Bebida Clásica" />
+      <h1>Bebida Clásica</h1>
+      <p>Refrescante y equilibrada, la bebida clásica que acompaña perfectamente cada bocado, ideal para saciar tu sed y realzar el sabor de tu comida.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[5]['Precio']; ?>">$<?php echo $productos[5]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="5"><?php echo $productos[5]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Bebida Clásica"
+                data-precio="<?php echo $productos[5]['Precio']; ?>"
+                data-categoria="bebidas"
+                data-id="5">+</button>
       </div>
-    </main>
+    </article>
 
+    <!-- Bebida 2: Agua Sin Gas -->
+    <article class="plato">
+      <img src="../Imagenes/Aguas.png" alt="Agua Sin Gas" />
+      <h1>Agua Sin Gas</h1>
+      <p>Pureza en cada sorbo, agua sin gas cristalina que hidrata y refresca de forma natural, perfecta para disfrutar con cualquier plato.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[6]['Precio']; ?>">$<?php echo $productos[6]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="6"><?php echo $productos[6]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Agua Sin Gas"
+                data-precio="<?php echo $productos[6]['Precio']; ?>"
+                data-categoria="bebidas"
+                data-id="6">+</button>
+      </div>
+    </article>
+
+    <!-- Bebida 3: Lata de Fanta -->
+    <article class="plato">
+      <img src="../Imagenes/Lata de Fanta.png" alt="Lata de Fanta" />
+      <h1>Lata de Fanta</h1>
+      <p>Explosión cítrica y burbujeante que despierta tus sentidos, la Fanta es la opción ideal para quienes buscan sabor y frescura en cada lata.</p>
+      <div class="plato--info">
+        <p data-precio="<?php echo $productos[7]['Precio']; ?>">$<?php echo $productos[7]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="7"><?php echo $productos[7]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-nombre="Lata de Fanta"
+                data-precio="<?php echo $productos[7]['Precio']; ?>"
+                data-categoria="bebidas"
+                data-id="7">+</button>
+      </div>
+    </article>
+
+  </div>
+</main>
     <!-- Modal Carrito -->
     <div class="modal" id="modal-carrito">
       <div class="modal-contenido">

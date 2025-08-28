@@ -1,5 +1,26 @@
 <?php
 session_start();
+
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+
+// IDs de las papas que queremos mostrar
+$idsHamburguesas = [14,15,3];
+$idsStr = implode(",", $idsHamburguesas);
+
+// Traer solo las papas necesarias
+$productos = [];
+$resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos WHERE ID IN ($idsStr)");
+if ($resultado) {
+    while ($row = $resultado->fetch_assoc()) {
+        $productos[$row['ID']] = $row; // guardamos por ID
+    }
+} else {
+    die("Error en la consulta: " . $conexion->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -64,40 +85,55 @@ session_start();
     <div class="platos">
 
       <!-- Papas Fritas 1 -->
-      <article class="plato">
-        <img src="../Imagenes/Papas.png" alt="Papas Clásica" />
-        <h1>Papas Clásica</h1>
-        <p>Crujientes papas doradas, perfectamente saladas para acompañar cualquier momento, ideales para compartir y disfrutar con tu salsa favorita.</p>
-        <div class="plato--info">
-          <p>$4.99</p>
-          <button type="button" class="btn-agregar" data-id="1" data-nombre="Papas Clásica" data-precio="4.99" data-categoria="Papas">+</button>
-        </div>
-      </article>
-
-      <!-- Papas Fritas 2 -->
-      <article class="plato">
-        <img src="../Imagenes/Papas medianas.png" alt="Papas Fritas Medianas" />
-        <h1>Papas Fritas Medianas</h1>
-        <p>Porción ideal de papas doradas y crujientes, con el punto justo de sal para que cada bocado sea una explosión de sabor irresistible.</p>
-        <div class="plato--info">
-          <p>$6.49</p>
-          <button type="button" class="btn-agregar" data-id="2" data-nombre="Papas Fritas Medianas" data-precio="6.49" data-categoria="Papas">+</button>
-        </div>
-      </article>
-
-      <!-- Papas Fritas 3 -->
-      <article class="plato">
-        <img src="../Imagenes/papas-fritas.png" alt="Papas Grandes Fritas" />
-        <h1>Papas Grandes Fritas</h1>
-        <p>Porción generosa de papas fritas doradas y crujientes por fuera, suaves por dentro. Perfectas para acompañar cualquier plato o disfrutar solas con tus salsas favoritas. ¡Un clásico irresistible!</p>
-        <div class="plato--info">
-          <p>$7.99</p>
-          <button type="button" class="btn-agregar" data-id="3" data-nombre="Papas Grandes Fritas" data-precio="7.99" data-categoria="Papas">+</button>
-        </div>
-      </article>
+    <article class="plato">
+      <img src="../Imagenes/Papas.png" alt="Papas Clásica" />
+      <h1><?php echo $productos[14]['Nombre']; ?></h1>
+      <p>Crujientes papas doradas, perfectamente saladas para acompañar cualquier momento, ideales para compartir y disfrutar con tu salsa favorita.</p>
+      <div class="plato--info">
+        <p>$<?php echo $productos[14]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="14"><?php echo $productos[14]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-id="14"
+                data-nombre="<?php echo $productos[14]['Nombre']; ?>"
+                data-precio="<?php echo $productos[14]['Precio']; ?>"
+                data-categoria="Papas">+</button>
       </div>
-    </main>
+    </article>
+
+    <!-- Papas Fritas 2 -->
+    <article class="plato">
+      <img src="../Imagenes/Papas medianas.png" alt="Papas Fritas Medianas" />
+      <h1><?php echo $productos[15]['Nombre']; ?></h1>
+      <p>Porción ideal de papas doradas y crujientes, con el punto justo de sal para que cada bocado sea una explosión de sabor irresistible.</p>
+      <div class="plato--info">
+        <p>$<?php echo $productos[15]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="15"><?php echo $productos[15]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-id="15"
+                data-nombre="<?php echo $productos[15]['Nombre']; ?>"
+                data-precio="<?php echo $productos[15]['Precio']; ?>"
+                data-categoria="Papas">+</button>
+      </div>
+    </article>
+
+    <!-- Papas Fritas 3 -->
+    <article class="plato">
+      <img src="../Imagenes/papas-fritas.png" alt="Papas Grandes Fritas" />
+      <h1><?php echo $productos[3]['Nombre']; ?></h1>
+      <p>Porción generosa de papas fritas doradas y crujientes por fuera, suaves por dentro. Perfectas para acompañar cualquier plato o disfrutar solas con tus salsas favoritas.</p>
+      <div class="plato--info">
+        <p>$<?php echo $productos[3]['Precio']; ?></p>
+        <p>Stock: <span class="stock" data-id="3"><?php echo $productos[3]['Stock']; ?></span></p>
+        <button type="button" class="btn-agregar"
+                data-id="3"
+                data-nombre="<?php echo $productos[3]['Nombre']; ?>"
+                data-precio="<?php echo $productos[3]['Precio']; ?>"
+                data-categoria="Papas">+</button>
+      </div>
+    </article>
+
   </div>
+</main>
 
  <!-- Modal Carrito -->
     <div class="modal" id="modal-carrito">
