@@ -1,18 +1,23 @@
 <?php
+// Iniciamos la sesión para poder usar $_SESSION
 session_start();
 
 // Conexión a la base de datos
 $conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
 if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+    die("Error de conexión: " . $conexion->connect_error); // Detiene la ejecución si hay error
 }
 
-// Traer todos los productos
+
+// Consulta SQL: obtenemos todos los productos de la tabla 'productos'
 $resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos");
+
+// Creamos un array vacío donde vamos a guardar los productos
 $productos = [];
 if ($resultado) {
     while ($row = $resultado->fetch_assoc()) {
-        $productos[$row['ID']] = $row; // guardamos por ID
+      // Guardamos cada producto dentro del array, usando el ID como clave
+        $productos[$row['ID']] = $row; // Guardamos los productos en un array asociativo usando el ID como clave
     }
 }
 ?>
@@ -21,7 +26,11 @@ if ($resultado) {
 <head>
   <meta charset="UTF-8" />
   <title>Servicios - MendoFood</title>
+  
+  <!-- Fuente Roboto -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet" />
+  
+  <!-- Estilos CSS -->
   <link rel="stylesheet" href="normalize.css" />
   <link rel="stylesheet" href="index.css" />
   <link rel="stylesheet" href="estilo_servicio.css">
@@ -33,7 +42,7 @@ if ($resultado) {
   <style>
     /* Modal del carrito */
     .modal {
-      display: none;
+      display: none; /* Oculto por defecto */
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -50,7 +59,7 @@ if ($resultado) {
       max-height: 80vh;
       overflow-y: auto;
     }
-   .modal-contenido ul {
+    .modal-contenido ul {
       list-style: none;
       padding: 0;
       margin: 0 0 10px 0;
@@ -62,9 +71,7 @@ if ($resultado) {
       justify-content: space-between;
       align-items: center;
     }
-    .modal-contenido li span.nombre-producto {
-      flex: 1;
-    }
+    .modal-contenido li span.nombre-producto { flex: 1; }
     .modal-contenido li button.eliminar {
       background: none;
       color: red;
@@ -75,18 +82,11 @@ if ($resultado) {
       align-items: center;
       justify-content: center;
     }
-    .modal-contenido li button.eliminar:hover {
-      color: darkred;
-    }
-    .carrito {
-      position: relative;
-      display: inline-block;
-      margin-left: 20px;
-      cursor: pointer;
-    }
-    .carrito-icono {
-      width: 30px;
-    }
+    .modal-contenido li button.eliminar:hover { color: darkred; }
+
+    /* Icono del carrito */
+    .carrito { position: relative; display: inline-block; margin-left: 20px; cursor: pointer; }
+    .carrito-icono { width: 30px; }
     #contador-carrito {
       position: absolute;
       top: -8px;
@@ -100,6 +100,7 @@ if ($resultado) {
       min-width: 18px;
       text-align: center;
     }
+
     .cerrar {
       background: #444;
       color: white;
@@ -128,7 +129,8 @@ if ($resultado) {
           <li><a href="We.php">Nosotros</a></li>
           <li><a href="#">Galería</a></li>
           <li>
-         <?php if(isset($_SESSION['usuario'])): ?>
+            <!-- Si el usuario está logueado -->
+            <?php if(isset($_SESSION['usuario'])): ?>
               <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
               <a href="../logout.php">Cerrar sesión</a>
             <?php else: ?>
@@ -188,44 +190,55 @@ if ($resultado) {
         <button class="cerrar" id="btn-comprar">Comprar</button>
       </div>
     </div>
-  </div>
 
   <script>
+    // Seleccionamos elementos del DOM
     const abrirCarrito = document.getElementById("abrir-carrito");
     const cerrarCarrito = document.getElementById("cerrar-carrito");
     const modal = document.getElementById("modal-carrito");
     const listaCarrito = document.getElementById("lista-carrito");
     const totalCarrito = document.getElementById("total-carrito");
     const contadorCarrito = document.getElementById("contador-carrito");
-    const botonesAgregar = document.querySelectorAll(".btn-agregar");
+    const botonesAgregar = document.querySelectorAll(".btn-agregar"); // botones de agregar productos
     const btnComprar = document.getElementById("btn-comprar");
 
+    // Saber si el usuario está logueado
     const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
 
+    // Cargar carrito desde localStorage
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     carrito = carrito.filter(item => item.nombre && item.precio && item.producto_id);
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
+    // Función para actualizar contador de productos en carrito
     function actualizarContador() {
       const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
       contadorCarrito.textContent = totalCantidad;
     }
 
+    // Función para mostrar productos en el modal carrito
     function mostrarCarrito() {
       listaCarrito.innerHTML = "";
       let total = 0;
       carrito.forEach((item, index) => {
         total += item.precio * item.cantidad;
+
+        
+    // Creamos elementos HTML dinámicamente
         const li = document.createElement("li");
         const nombreSpan = document.createElement("span");
         nombreSpan.textContent = `${item.nombre} x${item.cantidad}`;
         nombreSpan.classList.add("nombre-producto");
         const precioSpan = document.createElement("span");
         precioSpan.textContent = `$${(item.precio * item.cantidad).toFixed(2)}`;
+
+            // Botón para eliminar productos
         const botonEliminar = document.createElement("button");
         botonEliminar.innerHTML = '<ion-icon name="close-outline"></ion-icon>';
         botonEliminar.classList.add("eliminar");
         botonEliminar.addEventListener("click", () => { eliminarProducto(index); });
+
+          // Armamos la fila del carrito
         li.appendChild(nombreSpan);
         li.appendChild(precioSpan);
         li.appendChild(botonEliminar);
@@ -234,6 +247,7 @@ if ($resultado) {
       totalCarrito.textContent = total.toFixed(2);
     }
 
+    // Función para eliminar producto del carrito
     function eliminarProducto(index) {
       carrito.splice(index, 1);
       guardarCarrito();
@@ -241,12 +255,14 @@ if ($resultado) {
       actualizarContador();
     }
 
+    // Guardar carrito en localStorage
     function guardarCarrito() {
       localStorage.setItem("carrito", JSON.stringify(carrito));
     }
 
+    // Función para agregar productos al carrito
     function agregarAlCarrito(nombre, precio, categoria, producto_id) {
-      producto_id = parseInt(producto_id); // <-- Corregido: asegurar que sea número
+      producto_id = parseInt(producto_id); // asegurar que sea número
       const index = carrito.findIndex(item => item.nombre === nombre && item.categoria === categoria);
       if (index !== -1) {
         carrito[index].cantidad++;
@@ -257,6 +273,7 @@ if ($resultado) {
       actualizarContador();
     }
 
+    // Eventos para los botones "Agregar al carrito"
     botonesAgregar.forEach(boton => {
       boton.addEventListener("click", () => {
         const nombre = boton.getAttribute("data-nombre");
@@ -268,22 +285,20 @@ if ($resultado) {
       });
     });
 
-    abrirCarrito.addEventListener("click", () => {
-      mostrarCarrito();
-      modal.style.display = "flex";
-    });
-
+    // Abrir y cerrar modal carrito
+    abrirCarrito.addEventListener("click", () => { mostrarCarrito(); modal.style.display = "flex"; });
     cerrarCarrito.addEventListener("click", () => { modal.style.display = "none"; });
-
     window.addEventListener("click", e => { if(e.target === modal) modal.style.display = "none"; });
 
     actualizarContador();
 
+    // Evento para comprar
     btnComprar.addEventListener("click", () => {
       if (!usuarioLogueado) {
         alert("⚠️ Primero tienes que iniciar sesión para comprar.");
         window.location.href = "login-register.php";
       } else {
+           // Enviamos los datos a PHP con fetch
         fetch("procesar_compra.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

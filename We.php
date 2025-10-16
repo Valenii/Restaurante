@@ -187,6 +187,7 @@ if ($resultado) {
   </div>
 
   <script>
+    // Seleccionamos elementos del DOM
     const abrirCarrito = document.getElementById("abrir-carrito");
     const cerrarCarrito = document.getElementById("cerrar-carrito");
     const modal = document.getElementById("modal-carrito");
@@ -198,10 +199,12 @@ if ($resultado) {
 
     const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
 
+        // Cargar carrito desde localStorage
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     carrito = carrito.filter(item => item.nombre && item.precio && item.producto_id);
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
+        // Función para actualizar contador de productos en carrito
     function actualizarContador() {
       const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
       contadorCarrito.textContent = totalCantidad;
@@ -212,16 +215,24 @@ if ($resultado) {
       let total = 0;
       carrito.forEach((item, index) => {
         total += item.precio * item.cantidad;
+
+            // Creamos elementos HTML dinámicamente
+
         const li = document.createElement("li");
         const nombreSpan = document.createElement("span");
         nombreSpan.textContent = `${item.nombre} x${item.cantidad}`;
         nombreSpan.classList.add("nombre-producto");
         const precioSpan = document.createElement("span");
         precioSpan.textContent = `$${(item.precio * item.cantidad).toFixed(2)}`;
+
+               // Botón para eliminar productos
         const botonEliminar = document.createElement("button");
         botonEliminar.innerHTML = '<ion-icon name="close-outline"></ion-icon>';
         botonEliminar.classList.add("eliminar");
         botonEliminar.addEventListener("click", () => { eliminarProducto(index); });
+
+
+        //fila del carrito
         li.appendChild(nombreSpan);
         li.appendChild(precioSpan);
         li.appendChild(botonEliminar);
@@ -236,7 +247,7 @@ if ($resultado) {
       mostrarCarrito();
       actualizarContador();
     }
-
+    // Guardar carrito en localStorage
     function guardarCarrito() {
       localStorage.setItem("carrito", JSON.stringify(carrito));
     }
@@ -253,6 +264,7 @@ if ($resultado) {
       actualizarContador();
     }
 
+    // Eventos para los botones "Agregar al carrito"
     botonesAgregar.forEach(boton => {
       boton.addEventListener("click", () => {
         const nombre = boton.getAttribute("data-nombre");
@@ -280,6 +292,7 @@ if ($resultado) {
         alert("⚠️ Primero tienes que iniciar sesión para comprar.");
         window.location.href = "login-register.php";
       } else {
+           // Enviamos los datos a PHP con fetch
         fetch("procesar_compra.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

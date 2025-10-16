@@ -1,18 +1,22 @@
 <?php
+// Iniciamos la sesión para poder usar variables de sesión (usuario logueado)
 session_start();
 
-// Conexión a la base de datos
+// Conexión a la base de datos MySQL
 $conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// Traer todos los productos
+// Consulta SQL: obtenemos todos los productos de la tabla 'productos'
 $resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos");
+
+// Creamos un array vacío para guardar los productos
 $productos = [];
 if ($resultado) {
     while ($row = $resultado->fetch_assoc()) {
-        $productos[$row['ID']] = $row; // guardamos por ID
+        // Guardamos cada producto en el array usando su ID como índice
+        $productos[$row['ID']] = $row;
     }
 }
 ?>
@@ -25,18 +29,18 @@ if ($resultado) {
   <link rel="stylesheet" href="normalize.css" />
   <link rel="stylesheet" href="index.css" />
 
-  <!-- Ionicons para íconos -->
+  <!-- Ionicons para los íconos -->
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
   <style>
-    /* Modal del carrito */
+    /* Estilos del modal del carrito */
     .modal {
-      display: none;
+      display: none; /* Inicialmente oculto */
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0,0,0,0.6); /* Fondo oscuro transparente */
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -47,13 +51,9 @@ if ($resultado) {
       border-radius: 10px;
       width: 320px;
       max-height: 80vh;
-      overflow-y: auto;
+      overflow-y: auto; /* Scroll si hay muchos productos */
     }
-    .modal-contenido ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 10px 0;
-    }
+    .modal-contenido ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
     .modal-contenido li {
       border-bottom: 1px solid #ccc;
       padding: 5px 0;
@@ -73,6 +73,8 @@ if ($resultado) {
       justify-content: center;
     }
     .modal-contenido li button.eliminar:hover { color: darkred; }
+
+    /* Estilos del carrito en el header */
     .carrito { position: relative; display: inline-block; margin-left: 20px; cursor: pointer; }
     .carrito-icono { width: 30px; }
     #contador-carrito {
@@ -88,6 +90,8 @@ if ($resultado) {
       min-width: 18px;
       text-align: center;
     }
+
+    /* Botones de cerrar modal o comprar */
     .cerrar {
       background: #444;
       color: white;
@@ -103,6 +107,7 @@ if ($resultado) {
 </head>
 <body>
 <div class="contenedor">
+  <!-- Header con logo, menú y carrito -->
   <header class="header">
     <div class="logo"><p>MENDO<span>FOOD</span></p></div>
     <div class="hamburguesa"><img src="Imagenes/menu.png" alt="Menu hamburguesa"></div>
@@ -115,16 +120,18 @@ if ($resultado) {
         <li><a href="#">Galería</a></li>
         <li>
           <?php if(isset($_SESSION['usuario'])): ?>
+            <!-- Si el usuario está logueado -->
             <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
             <a href="logout.php">Cerrar sesión</a>
           <?php else: ?>
+            <!-- Si no está logueado -->
             <a href="login-register.php">Iniciar Sesión</a>
             <a href="login-register.php">Registrarse</a>
           <?php endif; ?>
         </li>
       </ul>
 
-      <!-- Carrito -->
+      <!-- Icono de carrito -->
       <div class="carrito" id="abrir-carrito">
         <img src="Imagenes/icons8-carrito-de-compras-30.png" alt="Carrito" class="carrito-icono" />
         <span id="contador-carrito">0</span>
@@ -132,7 +139,7 @@ if ($resultado) {
     </nav>
   </header>
 
-  <!-- Sección del menú -->
+  <!-- Sección del menú de comida -->
 <main class="comida">
   <h2 class="comida--titulo">Nuestro Menú</h2>
   <div class="platos">
@@ -163,7 +170,7 @@ if ($resultado) {
   </div>
 </main>
 
-<!-- Modal Carrito -->
+<!-- Modal del carrito -->
 <div class="modal" id="modal-carrito">
   <div class="modal-contenido">
     <h2>Tu carrito</h2>
@@ -175,7 +182,7 @@ if ($resultado) {
 </div>
 
 <script>
-// Selecciones
+// Selecciones de elementos del DOM
 const abrirCarrito = document.getElementById("abrir-carrito");
 const cerrarCarrito = document.getElementById("cerrar-carrito");
 const modal = document.getElementById("modal-carrito");
@@ -183,24 +190,30 @@ const listaCarrito = document.getElementById("lista-carrito");
 const totalCarrito = document.getElementById("total-carrito");
 const contadorCarrito = document.getElementById("contador-carrito");
 const btnComprar = document.getElementById("btn-comprar");
+
+// Saber si el usuario está logueado
 const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
 
-// ✅ Cargar carrito desde localStorage (incluye productos agregados desde las categorías)
+// Cargar carrito desde localStorage (persistencia en navegador)
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+// Filtrar elementos válidos
 carrito = carrito.filter(item => item.nombre && item.precio && item.producto_id);
 localStorage.setItem("carrito", JSON.stringify(carrito));
 
-// Funciones
+// Función para actualizar el contador del carrito
 function actualizarContador() {
   const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
   contadorCarrito.textContent = totalCantidad;
 }
 
+// Función para mostrar los productos en el modal del carrito
 function mostrarCarrito() {
   listaCarrito.innerHTML = "";
   let total = 0;
   carrito.forEach((item, index) => {
     total += item.precio * item.cantidad;
+
+    // Creamos elementos HTML dinámicamente
     const li = document.createElement("li");
 
     const nombreSpan = document.createElement("span");
@@ -209,17 +222,18 @@ function mostrarCarrito() {
 
     const precioSpan = document.createElement("span");
     precioSpan.textContent = `$${(item.precio * item.cantidad).toFixed(2)}`;
+    // Botón para eliminar productos
 
     const botonEliminar = document.createElement("button");
     botonEliminar.innerHTML = '<ion-icon name="close-outline"></ion-icon>';
     botonEliminar.classList.add("eliminar");
     botonEliminar.addEventListener("click", () => {
-      carrito.splice(index, 1);
+      carrito.splice(index, 1); // Eliminar producto del carrito
       localStorage.setItem("carrito", JSON.stringify(carrito));
       mostrarCarrito();
       actualizarContador();
     });
-
+  // Armamos la fila del carrito
     li.appendChild(nombreSpan);
     li.appendChild(precioSpan);
     li.appendChild(botonEliminar);
@@ -228,19 +242,24 @@ function mostrarCarrito() {
   totalCarrito.textContent = total.toFixed(2);
 }
 
-// Eventos
+// Abrir modal del carrito
 abrirCarrito.addEventListener("click", () => {
   mostrarCarrito();
   modal.style.display = "flex";
 });
+
+// Cerrar modal
 cerrarCarrito.addEventListener("click", () => { modal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target === modal) modal.style.display = "none"; });
 
+// Comprar productos
 btnComprar.addEventListener("click", () => {
   if (!usuarioLogueado) {
+    // Si no está logueado, mostrar alerta y redirigir
     alert("⚠️ Primero tienes que iniciar sesión para comprar.");
     window.location.href = "login-register.php";
   } else {
+   // Enviamos los datos a PHP con fetch
     fetch("procesar_compra.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },

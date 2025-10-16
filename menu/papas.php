@@ -1,22 +1,26 @@
 <?php
+// Iniciamos sesión para poder guardar datos del usuario (ejemplo: login activo)
 session_start();
 
-// Conexión a la base de datos
+// Conexión a la base de datos MySQL
 $conexion = new mysqli("localhost", "root", "", "restaurante_log_reg");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// IDs de las papas que queremos mostrar
-$idsHamburguesas = [14,15,3];
-$idsStr = implode(",", $idsHamburguesas);
+// IDs de los productos de Papas Fritas que queremos mostrar
+$idsPapas = [14, 15, 3];
+$idsStr = implode(",", $idsPapas);
 
-// Traer solo las papas necesarias
+// Array para almacenar los productos
 $productos = [];
+
+// Ejecuta la consulta SQL para traer los productos con los IDs especificados
+
 $resultado = $conexion->query("SELECT ID, Nombre, Precio, Stock FROM productos WHERE ID IN ($idsStr)");
 if ($resultado) {
     while ($row = $resultado->fetch_assoc()) {
-        $productos[$row['ID']] = $row; // guardamos por ID
+        $productos[$row['ID']] = $row; // Guardamos por ID
     }
 } else {
     die("Error en la consulta: " . $conexion->error);
@@ -30,10 +34,26 @@ if ($resultado) {
   <title>Papas Fritas - MendoFood</title>
   <link rel="stylesheet" href="../normalize.css" />
   <link rel="stylesheet" href="../index.css" />
-    <style>
-    /* Modal del carrito */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-contenido { background: white; padding: 20px; border-radius: 10px; width: 320px; max-height: 80vh; overflow-y: auto; }
+  <style>
+    /* Estilos del modal del carrito */
+    .modal {
+        display: none; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100%; height: 100%; 
+        background-color: rgba(0,0,0,0.6); 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 1000;
+    }
+    .modal-contenido {
+        background: white; 
+        padding: 20px; 
+        border-radius: 10px; 
+        width: 320px; 
+        max-height: 80vh; 
+        overflow-y: auto;
+    }
     .modal-contenido ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
     .modal-contenido li { border-bottom: 1px solid #ccc; padding: 5px 0; display: flex; justify-content: space-between; align-items: center; }
     .modal-contenido li span.nombre-producto { flex: 1; }
@@ -46,7 +66,6 @@ if ($resultado) {
   </style>
 </head>
 <body>
-
   <div class="contenedor">
     <!-- HEADER -->
     <header class="header">
@@ -60,7 +79,7 @@ if ($resultado) {
           <li><a href="../We.php">Nosotros</a></li>
           <li><a href="#">Galería</a></li>
           <li>
-           <?php if(isset($_SESSION['usuario'])): ?>
+            <?php if(isset($_SESSION['usuario'])): ?>
               <span><?php echo htmlspecialchars($_SESSION['usuario']); ?></span>
               <a href="../logout.php">Cerrar sesión</a>
             <?php else: ?>
@@ -69,7 +88,6 @@ if ($resultado) {
             <?php endif; ?>
           </li>
         </ul>
-
         <!-- Carrito -->
         <div class="carrito" id="abrir-carrito">
           <img src="../Imagenes/icons8-carrito-de-compras-30.png" alt="Carrito" class="carrito-icono" />
@@ -78,64 +96,61 @@ if ($resultado) {
       </nav>
     </header>
 
-    
-  <!-- Sección de Papas Fritas -->
-  <main class="comida">
-    <h2 class="comida--titulo">Papas Fritas</h2>
-    <div class="platos">
+    <!-- Sección de Papas Fritas -->
+    <main class="comida">
+      <h2 class="comida--titulo">Papas Fritas</h2>
+      <div class="platos">
+        <!-- Papas 1 -->
+        <article class="plato">
+          <img src="../Imagenes/Papas.png" alt="Papas Clásica" />
+          <h1><?php echo $productos[14]['Nombre']; ?></h1>
+          <p>Crujientes papas doradas, perfectas para compartir y disfrutar con tu salsa favorita.</p>
+          <div class="plato--info">
+            <p>$<?php echo $productos[14]['Precio']; ?></p>
+            <p>Stock: <span class="stock" data-id="14"><?php echo $productos[14]['Stock']; ?></span></p>
+            <button type="button" class="btn-agregar" 
+                    data-id="14" 
+                    data-nombre="<?php echo $productos[14]['Nombre']; ?>" 
+                    data-precio="<?php echo $productos[14]['Precio']; ?>" 
+                    data-categoria="Papas">+</button>
+          </div>
+        </article>
 
-      <!-- Papas Fritas 1 -->
-    <article class="plato">
-      <img src="../Imagenes/Papas.png" alt="Papas Clásica" />
-      <h1><?php echo $productos[14]['Nombre']; ?></h1>
-      <p>Crujientes papas doradas, perfectamente saladas para acompañar cualquier momento, ideales para compartir y disfrutar con tu salsa favorita.</p>
-      <div class="plato--info">
-        <p>$<?php echo $productos[14]['Precio']; ?></p>
-        <p>Stock: <span class="stock" data-id="14"><?php echo $productos[14]['Stock']; ?></span></p>
-        <button type="button" class="btn-agregar"
-                data-id="14"
-                data-nombre="<?php echo $productos[14]['Nombre']; ?>"
-                data-precio="<?php echo $productos[14]['Precio']; ?>"
-                data-categoria="Papas">+</button>
+        <!-- Papas 2 -->
+        <article class="plato">
+          <img src="../Imagenes/Papas medianas.png" alt="Papas Medianas" />
+          <h1><?php echo $productos[15]['Nombre']; ?></h1>
+          <p>Porción ideal de papas doradas y crujientes, con el punto justo de sal.</p>
+          <div class="plato--info">
+            <p>$<?php echo $productos[15]['Precio']; ?></p>
+            <p>Stock: <span class="stock" data-id="15"><?php echo $productos[15]['Stock']; ?></span></p>
+            <button type="button" class="btn-agregar" 
+                    data-id="15" 
+                    data-nombre="<?php echo $productos[15]['Nombre']; ?>" 
+                    data-precio="<?php echo $productos[15]['Precio']; ?>" 
+                    data-categoria="Papas">+</button>
+          </div>
+        </article>
+
+        <!-- Papas 3 -->
+        <article class="plato">
+          <img src="../Imagenes/papas-fritas.png" alt="Papas Grandes" />
+          <h1><?php echo $productos[3]['Nombre']; ?></h1>
+          <p>Porción generosa de papas fritas doradas y crujientes por fuera, suaves por dentro.</p>
+          <div class="plato--info">
+            <p>$<?php echo $productos[3]['Precio']; ?></p>
+            <p>Stock: <span class="stock" data-id="3"><?php echo $productos[3]['Stock']; ?></span></p>
+            <button type="button" class="btn-agregar" 
+                    data-id="3" 
+                    data-nombre="<?php echo $productos[3]['Nombre']; ?>" 
+                    data-precio="<?php echo $productos[3]['Precio']; ?>" 
+                    data-categoria="Papas">+</button>
+          </div>
+        </article>
       </div>
-    </article>
+    </main>
 
-    <!-- Papas Fritas 2 -->
-    <article class="plato">
-      <img src="../Imagenes/Papas medianas.png" alt="Papas Fritas Medianas" />
-      <h1><?php echo $productos[15]['Nombre']; ?></h1>
-      <p>Porción ideal de papas doradas y crujientes, con el punto justo de sal para que cada bocado sea una explosión de sabor irresistible.</p>
-      <div class="plato--info">
-        <p>$<?php echo $productos[15]['Precio']; ?></p>
-        <p>Stock: <span class="stock" data-id="15"><?php echo $productos[15]['Stock']; ?></span></p>
-        <button type="button" class="btn-agregar"
-                data-id="15"
-                data-nombre="<?php echo $productos[15]['Nombre']; ?>"
-                data-precio="<?php echo $productos[15]['Precio']; ?>"
-                data-categoria="Papas">+</button>
-      </div>
-    </article>
-
-    <!-- Papas Fritas 3 -->
-    <article class="plato">
-      <img src="../Imagenes/papas-fritas.png" alt="Papas Grandes Fritas" />
-      <h1><?php echo $productos[3]['Nombre']; ?></h1>
-      <p>Porción generosa de papas fritas doradas y crujientes por fuera, suaves por dentro. Perfectas para acompañar cualquier plato o disfrutar solas con tus salsas favoritas.</p>
-      <div class="plato--info">
-        <p>$<?php echo $productos[3]['Precio']; ?></p>
-        <p>Stock: <span class="stock" data-id="3"><?php echo $productos[3]['Stock']; ?></span></p>
-        <button type="button" class="btn-agregar"
-                data-id="3"
-                data-nombre="<?php echo $productos[3]['Nombre']; ?>"
-                data-precio="<?php echo $productos[3]['Precio']; ?>"
-                data-categoria="Papas">+</button>
-      </div>
-    </article>
-
-  </div>
-</main>
-
- <!-- Modal Carrito -->
+    <!-- Modal del carrito -->
     <div class="modal" id="modal-carrito">
       <div class="modal-contenido">
         <h2>Tu carrito</h2>
@@ -148,6 +163,7 @@ if ($resultado) {
   </div>
 
   <script>
+    // Referencias a elementos del DOM
     const abrirCarrito = document.getElementById("abrir-carrito");
     const cerrarCarrito = document.getElementById("cerrar-carrito");
     const modal = document.getElementById("modal-carrito");
@@ -158,6 +174,7 @@ if ($resultado) {
     const btnComprar = document.getElementById("btn-comprar");
     const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
 
+    // Recupera carrito de localStorage
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     carrito = carrito.filter(item => item.nombre && item.precio && item.producto_id);
     localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -172,20 +189,16 @@ if ($resultado) {
       let total = 0;
       carrito.forEach((item, index) => {
         total += item.precio * item.cantidad;
-
         const li = document.createElement("li");
         const nombreSpan = document.createElement("span");
         nombreSpan.textContent = `${item.nombre} x${item.cantidad}`;
         nombreSpan.classList.add("nombre-producto");
-
         const precioSpan = document.createElement("span");
         precioSpan.textContent = `$${(item.precio * item.cantidad).toFixed(2)}`;
-
         const botonEliminar = document.createElement("button");
         botonEliminar.innerHTML = '<ion-icon name="close-outline"></ion-icon>';
         botonEliminar.classList.add("eliminar");
         botonEliminar.addEventListener("click", () => eliminarProducto(index));
-
         li.appendChild(nombreSpan);
         li.appendChild(precioSpan);
         li.appendChild(botonEliminar);
@@ -201,6 +214,7 @@ if ($resultado) {
       actualizarContador();
     }
 
+// Guardar carrito en localStorage
     function guardarCarrito() {
       localStorage.setItem("carrito", JSON.stringify(carrito));
     }
@@ -259,6 +273,5 @@ if ($resultado) {
       }
     });
   </script>
-
 </body>
 </html>

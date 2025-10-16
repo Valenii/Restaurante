@@ -61,10 +61,11 @@ try {
         mysqli_query($conexion, "INSERT INTO compras (usuario_id, producto_id, cantidad, total, fecha) 
                                 VALUES (0, 0, $cantidad, $subtotal, NOW())");
     }
-
+// Confirmar todos los inserts si no hubo errores
     mysqli_commit($conexion);
     echo json_encode(['success' => 'Compra realizada con éxito 🎉']);
 } catch (Exception $e) {
+      // Deshacer los cambios si ocurrió un error
     mysqli_rollback($conexion);
     echo json_encode(['error' => $e->getMessage()]);
 }
